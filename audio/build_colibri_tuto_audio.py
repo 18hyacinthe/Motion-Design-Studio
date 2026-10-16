@@ -1,9 +1,9 @@
 # Soundtrack for colibri-tuto.html (30 s): same French voice as the first ad,
+# a light 120 BPM bed and sound effects on the on-screen events.
 # Models (Apache-2.0), not committed, next to this file:
 #   https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx
 #   https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin
 # pip install kokoro-onnx soundfile scipy ; ffmpeg loudnorm to -14 LUFS / -1 dBTP for the final mix.
-# a light 120 BPM bed and sound effects on the on-screen events.
 import json
 import os
 import sys
