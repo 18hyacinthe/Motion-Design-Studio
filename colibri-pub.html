@@ -792,9 +792,9 @@ function iconLock(ctx, s) {
   ctx.beginPath(); ctx.roundRect(-s * 0.3, -s * 0.02, s * 0.6, s * 0.44, s * 0.08); ctx.fill();
 }
 const CHIPS = [
-  { text: 'Des livreurs près de vous', icon: iconPin, y: 1525, t: 7.1 },
-  { text: 'Suivi en temps réel', icon: iconRadar, y: 1650, t: 7.45 },
-  { text: 'Paiement sécurisé', icon: iconLock, y: 1775, t: 7.8 },
+  { text: 'Des livreurs près de vous', icon: iconPin, y: 1525, t: 6.75 },
+  { text: 'Suivi en temps réel', icon: iconRadar, y: 1650, t: 7.1 },
+  { text: 'Paiement sécurisé', icon: iconLock, y: 1775, t: 8.25 },
 ];
 function drawChip(ctx, c, t, k) {
   const p = lin(c.t, c.t + 0.45, t), q = lin(9.0 + k * 0.08, 9.3 + k * 0.08, t);
@@ -978,7 +978,7 @@ function drawForeground(ctx, t, st) {
   CHIPS.forEach((c, k) => drawChip(ctx, c, t, k));
 
   // end card
-  maskedLine(ctx, 'Télécharge l’appli', 540, 470, FONT(800, 92), '#fff', lin(9.3, 9.85, t));
+  maskedLine(ctx, 'Téléchargez l’appli', 540, 470, FONT(800, 92), '#fff', lin(9.3, 9.85, t));
   maskedLine(ctx, 'Un clic, un livreur !', 540, 556, FONT(700, 50), C_CYAN_L, lin(9.45, 10.0, t));
   drawBadge(ctx, 'apple', 300, 1625, lin(9.9, 10.45, t), lin(10.6, 11.1, t), lin(11.25, 11.95, t));
   drawBadge(ctx, 'play', 780, 1625, lin(10.05, 10.6, t), lin(10.75, 11.25, t), lin(11.4, 12.0, t));
