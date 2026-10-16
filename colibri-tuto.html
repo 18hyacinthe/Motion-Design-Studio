@@ -1199,6 +1199,26 @@ function logoScreen(st) {
   return { x: (v.x * 0.5 + 0.5) * DW, y: (0.5 - v.y * 0.5) * DH, w: st.scale * PXU };
 }
 
+// where the rings and glow sit, per scene: x, y (design px), strength; eased by averaging
+function focusTarget(t) {
+  if (t < S.intro + 1.45) return [960, 470, 1];
+  if (t < S.ask) return [700, 470, 1];
+  if (t < S.svc) return [960, 560, 0.35];
+  if (t < S.form) return [1240, 560, 1];
+  if (t < S.price) return [1280, 560, 1];
+  if (t < S.price + 0.7) return [960, 560, 0.5];
+  if (t < S.offers) return [1300, 560, 1];
+  if (t < S.track) return [1330, 560, 0.6];
+  if (t < S.pay) return [960, 540, 0.15];
+  if (t < S.end) return [1290, 560, 1];
+  return [1150, 420, 1];
+}
+function focusAt(t) {
+  const acc = [0, 0, 0];
+  for (let k = 0; k < 12; k++) { const f = focusTarget(t - k * 0.05); acc[0] += f[0]; acc[1] += f[1]; acc[2] += f[2]; }
+  return acc.map((v) => v / 12);
+}
+
 // background mood: 1 = brand blue, 0 = navy (switched under the panel wipes)
 const WIPES = [S.ask, S.form, S.price, S.pay];
 function blueAt(t) {
@@ -1254,9 +1274,11 @@ function drawBackground(ctx, t) {
   // services: outlined words in step with the voice-over
   if (t >= S.svc && t < S.form) {
     const words = [[S.svc, 'SERVICES'], [7.2, 'COLIS'], [7.75, 'PHARMACIE'], [8.25, 'ACHATS'], [8.7, 'FACTURES']];
-    let w = words[0][1];
-    for (const [a, wd] of words) if (t >= a) w = wd;
-    scrollWords(ctx, w, t, lin(S.svc, S.svc + 0.4, t) * (1 - lin(S.form - 0.3, S.form, t)));
+    const env = lin(S.svc, S.svc + 0.4, t) * (1 - lin(S.form - 0.3, S.form, t));
+    words.forEach(([a, wd], i) => {
+      const next = words[i + 1] ? words[i + 1][0] : 99;
+      scrollWords(ctx, wd, t, env * lin(a - 0.12, a + 0.12, t) * (1 - lin(next - 0.12, next + 0.12, t)));
+    });
   }
   // tracking map
   if (t >= S.track - 0.4 && t < S.pay + 0.4) {
@@ -1572,10 +1594,9 @@ function renderAt(t) {
   cu.uTime.value = tm;
   cu.uFade.value = sstep(0, 0.35, tm) * (1 - sstep(DURATION - 0.2, DURATION, tm));
   cu.uBlue.value = blueAt(tm);
-  const rc = ps ? [ps.x, ps.y] : lst ? [logoScreen(lst).x, logoScreen(lst).y] : [960, 540];
-  const ringOn = (tm < S.ask) || (tm >= S.form && tm < S.price) || (tm >= S.svc && tm < S.form) || tm >= S.end || (tm >= S.pay && tm < S.end);
-  cu.uRings.value.set(rc[0] / DW, 1 - rc[1] / DH, ringOn ? 1 : 0.35, 1.0);
-  cu.uGlow.value.set(rc[0] / DW, 1 - rc[1] / DH, 1);
+  const fc = focusAt(tm);
+  cu.uRings.value.set(fc[0] / DW, 1 - fc[1] / DH, fc[2], 1.0);
+  cu.uGlow.value.set(fc[0] / DW, 1 - fc[1] / DH, 0.6 + 0.4 * fc[2]);
   pass(composeMat, compRT);
 
   // bloom
